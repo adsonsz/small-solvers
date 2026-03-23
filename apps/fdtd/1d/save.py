@@ -41,7 +41,7 @@ anim = FuncAnimation(fig, update, frames=Nt, interval=50, blit=True)
 plt.show()
 
 # Save
-anim.save("animation.mp4", fps=20)
+# anim.save("animation.mp4", fps=20)
 # anim.save("animation.gif", fps=20)
 
 
