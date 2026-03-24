@@ -30,7 +30,7 @@ int main() {
 
     // Allocate matrices.
     // EM Fields, Relative permeability.
-    // double* dx = malloc(sz * sizeof(double));
+    double* dx = malloc(sz * sizeof(double));
     double* ex = malloc(sz * sizeof(double));
     double* hy = malloc(sz * sizeof(double));
     double* er = malloc(sz * sizeof(double));
@@ -41,7 +41,7 @@ int main() {
 
     // Initialize EM Fields.
     for (size_t k = 1; k < sz; ++k) {
-        // dx[k] = 0.0;
+        dx[k] = 0.0;
         ex[k] = 0.0;
         hy[k] = 0.0;
     }
@@ -57,12 +57,7 @@ int main() {
     for (int i = 0; i < iter; ++i) {
         // Update Ex.
         for (size_t k = 1; k < sz; ++k) {
-            ex[k] += 0.5 / er[k] * (hy[k-1] - hy[k]);
-
-            // Should be equivalent to..
-            // .. but it isn't??? Why?
-            // dx[k] += 0.5 * (hy[k-1] - hy[k]);
-            // ex[k] = dx[k] / er[k];
+            dx[k] += 0.5 * (hy[k-1] - hy[k]);
         }
 
         // Contour condition
@@ -78,13 +73,15 @@ int main() {
         double fi = (double)i;
         double arg = (t0-fi)/spread * (t0-fi)/spread;
         double pulse = exp(-0.5 * arg);
-        // ex[5] += pulse;
+        // dx[5] += pulse;
 
         // Do instead a wave.
-        ex[5] += sin(2.0 * M_PI * fi * 0.01);
+        dx[5] += sin(2.0 * M_PI * fi * 0.01);
 
-        // Update Ex from Dx. This works.
-        // for (size_t k = 1; k < sz; ++k) ex[k] = dx[k] / er[k];
+        // Update Ex.
+        for (size_t k = 1; k < sz; ++k) {
+            ex[k] = dx[k] / er[k];
+        }
 
         // Update Hy.
         for (size_t k = 0; k < sz-1; ++k) {
